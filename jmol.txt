@@ -1,0 +1,122 @@
+set platformSpeed = 4
+antialiasDisplay = false;
+
+color "blue_green_yellow_red=[x0000FF] [x0060FF] [x00E0FF] [x00FFA0] [x00FF20] [x60FF00] [xE0FF00] [xFFE000] [xFF6000] [xFF0000]";
+color "blue_red=[x0000FF] [x1F00DF] [x3F00BF] [x5F009F] [x7F007F] [x9F005F] [xBF003F] [xDF001F] [xFF0000]";
+color "white_green=[xFFFFFF] [xDFFFDF] [xBFFFBF] [x9FFF9F] [x7FFF7F] [x5FFF5F] [x3FFF3F] [x1FFF1F] [x00FF00]";
+color "white_black=[xFFFFFF] [xDFDFDF] [xBFBFBF] [x9F9F9F] [x7F7F7F] [x5F5F5F] [x3F3F3F] [x1F1F1F] [x000000]";
+function hetero(on, iframe) {
+	define ~active_hetero (file=iframe and not water and not protein);
+	select ~active_hetero;
+	var ions = '_Li or _Be or _Na or _Mg or _Al or _K or _Ca or _Cr or _Mn or _Fe or _Co or _Ni or _Cu or _Zn or _Pd or _Pb or _Ag or _Cd or _Sn or _Sb or _Sr or _Cs or _Ba or _Pt or _Au or _Hg or _Cl or _Br or _F';
+	if (on) {
+		wireframe 100%;
+		select ~active_hetero and @ions;
+		cpk 100%;
+	}
+	else {
+		wireframe off;
+		select ~active_hetero and @ions;
+		cpk off;
+	}
+}
+
+function highlight(selector) {
+	select protein;
+	cpk off;
+	color cartoon lightblue;
+	select @{selector};
+	cpk 100%;
+	color atoms gold;
+}
+
+function sfill(c, on, active_frame, query_chain) {
+	select file=active_frame and (@query_chain) and temperature=c and protein;
+	if (on) {
+		cpk 100%;
+	}
+	else {
+		cpk off;
+	}
+}
+
+function sfall(on, active_frame, query_chain) {
+	select file=active_frame and (@query_chain) and protein;
+	if (on) {
+		cpk 100%;
+	}
+	else {
+		cpk off;
+	}
+}
+
+function ilabels(on, active_frame) {
+	select file=active_frame and *.CA and visible;
+	if (on) {
+		font label 15;
+		label %m%R;
+	}
+	else {
+		select all;
+		label off;
+	}
+}
+
+function aligned_residues(on, active_frame) {
+	define ~all (file=active_frame and protein and not hetero);
+	define ~aligned (temperature>0);
+	if (on) {
+		select ~all;
+		cartoon off;
+		select ~all and ~aligned;
+		wireframe 30%;
+		center ~all and ~aligned;
+	}
+	else {
+		select ~all;
+		wireframe off;
+		cartoon;
+		select ~all and ~aligned;
+		wireframe 80%;
+		center ~all;
+	}
+}
+
+function cpk_colors(on, active_frame) {
+	if (on) {
+		select file=active_frame;
+		color cartoon chain;
+		color atoms cpk;
+	}
+	else {
+		select file=active_frame and model=1;
+		color cartoon violet;
+		color atoms violet;
+		select file=active_frame and model=2;
+		color cartoon royalblue;
+		color atoms royalblue;
+	}
+}
+
+function ispin(on) {
+	if (on) {
+		spin on;
+	}
+	else {
+		spin off;
+	}
+}
+
+function cfram(frms) {
+	reset;
+	center (@frms);
+	zoom 100;
+	translate x 0;
+	translate y 0;
+}
+
+function ctemp(active_frame, query_chain) {
+	select file=active_frame and protein and (@query_chain);
+	color cartoon property relativetemperature "blue_green_yellow_red" range 0.0 0.9;
+	color atom property relativetemperature "blue_green_yellow_red" range 0.0 0.9;
+}
