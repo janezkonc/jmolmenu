@@ -1,1 +1,33 @@
-This will be JmolMenu example!
+<!DOCTYPE html> 
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+	<head>
+		<title>JmolMenu Example Page</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+		<meta name="author" content="Janez Konc" />
+		<meta name="description" content="JmolMenu floating menu example page." />
+		<meta name="keywords" content="Jmol, Jsmol, menu" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<script type="text/javascript">
+			var __jmol = 'jsmol-14.6.1_2016.07.11';
+		</script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+		<script type="text/javascript" src="<?php echo "jsmol-14.6.1_2016.07.11/JSmol.min.nojq.js"; ?>"></script>
+		<script type="text/javascript" src="<?php echo "jsmol-14.6.1_2016.07.11/js/JSmolThree.js"; ?>"></script>
+		<script type="text/javascript" src="<?php echo "jsmol-14.6.1_2016.07.11/js/JSmolGLmol.js"; ?>"></script>
+
+		<script type="text/javascript" src="viewed.js"></script>
+		<script type="text/javascript" src="legend.js"></script>
+		<script type="text/javascript" src="legend_mini.js"></script>
+		<script type="text/javascript" src="jml.js"></script>
+		<script type="text/javascript" src="results.js"></script>
+	</head>
+
+	<body>
+
+		<div class="ui-state-default" id="draggable" style="position:absolute;left:10%;z-index:9999;"></div>
+		<div id='jmlfun' style='height:800px;width:800px;background-color:red'></div>
+
+	</body>
+</html>
