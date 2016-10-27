@@ -4,12 +4,7 @@
 var applet_loaded = function() {
 	// add-query izvedemo sele, ko je DOM ready (oba, applet in DOM, morata biti ready)
 	setTimeout(function() {
-		// nalozimo query
-		if (__pairwise) 
-			$('#details-tab').find('.0\\#0').click();
-		else {
-			query(0);
-		}
+		query(0);
 	}, 0);	
 };
 
