@@ -5,9 +5,11 @@
 var Viewed = function() {
 	this.current_id = 0;
 	this.__viewed = new Array();
+
 	this.get_viewed = function() {
 		return this.__viewed;
 	};
+
 	this.get_unhidden = function() {
 		var f = new Array();
 		for (var i = 0; i < this.__viewed.length; i++) {
@@ -17,6 +19,7 @@ var Viewed = function() {
 		}
 		return f;
 	};
+
 	this.push = function(element) {
 		if (this.get_index_of(element) == -1) {
 			this.__viewed.push(element);
@@ -24,6 +27,15 @@ var Viewed = function() {
 		}
 		return false;
 	};
+
+	this.has_element = function(element) {
+		return this.get_index_of(element) > -1;
+	};
+
+	this.empty = function() {
+		return this.__viewed.length == 0;
+	};
+
 	this.get_index_of = function(element) {
 		var index = -1;
 		for (var i = 0; i < this.__viewed.length; i++) {
@@ -34,15 +46,12 @@ var Viewed = function() {
 		}
 		return index;
 	};
+
 	this.remove = function(element) {
 		var index = this.get_index_of(element);
-		if (index > -1) {
-			var iframe = this.__viewed[index].iframe;
-			this.__viewed.splice(index, 1); // remove
-			return iframe; // return iframe of deleted
-		}
-		alert("err: could not remove in viewed");
-		return -1; // not found
+		var iframe = this.__viewed[index].iframe;
+		this.__viewed.splice(index, 1); // remove
+		return iframe; // return iframe of deleted
 	};
 
 	this.get_id = function() {

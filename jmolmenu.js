@@ -5,6 +5,9 @@
 
 var JmolMenu = function() {
 
+	this.draggable = 0;
+	var _self = this;
+	
 	this.menu_html = 
 		"<ul class='sf-menu'>"
 		+ ""
@@ -119,11 +122,45 @@ var JmolMenu = function() {
 		+ "</li>"
 		+ "</ul>";
 	
-	this.draggable = 0;
-	var _self = this;
+	/** Adds object to the menu and displays it in jmol
+	 * 
+	 * object that's passed into this function needs the following parameters
+	 * 
+	 * type : protein|nucleic|compound|ion|water
+	 * hidden : true|false
+	 * file : url of the PDB file
+	 * name : text to display in the menu as object's name
+	 * 
+	 */
+	this.add_item = function(obj) {
+		obj["iframe"] = jml.get_nframe() + 1;
+		obj["format"] = jml.set_formatting(obj.type);
+		obj["id"] = obj.type + "_" + viewed.get_id();
+		obj["remove"] = function() { _self.remove_item(obj); };
+		
+		var append = !viewed.empty();
+		
+		if (viewed.push(obj)) { // add if not already added
+			jml.load(obj.file, append);
+			jml.update(viewed.get_unhidden());
+			this.update(viewed.get_viewed());
+		}
+		return function() { _self.remove_item(obj); } // return function that can remove the object
+	};
+
+
+	this.remove_item = function(obj) {
+		if (viewed.has_element(obj)) {
+			jml.zap(viewed.remove(obj));
+			jml.update(viewed.get_unhidden());
+			this.update(viewed.get_viewed());
+		}
+	};
+
 	this.init = function($draggable) {
 		this.draggable = $draggable.draggable().resizable();
 	};
+	
 	this.update = function(objs) {
 		
 		var html = this.write_html(objs);
@@ -133,10 +170,9 @@ var JmolMenu = function() {
 		this.customize_menu(objs);
 		
 		$(".resizable").css("width","100px");
-		/*$(".resizable").css("background-color","red");*/
-		
 		
 	};
+
 	this.write_html = function(objs) {
 		var html = "<table id='legend_table'>";
 		for (var i = 0; i < objs.length; i++) {
@@ -149,6 +185,7 @@ var JmolMenu = function() {
 		html += "</table>";
 		return html;
 	};
+
 	this.customize_menu = function(objs) {
 		this.draggable.find(".litem,.litem2").each(function(index) {
 			var $this = $(this);
@@ -157,19 +194,21 @@ var JmolMenu = function() {
 			console.log("object i = " + String(i) + " objs[i].type = " + objs[i].type);
 			// if we click on a leaf tag
 			if ($this.hasClass(objs[i].type)) {
-				//~ $this.css('display', 'none');
 				$this.hide();
 			}
 		});
 	};
+
 	this.add_click_handlers = function(objs) {
 		this.draggable.unbind('click').click(function(event) {
 			var $target = $(event.target);
+
 			// get the object number i from the tr's classname object_i 
 			var i = $target.closest('tr').attr('class').split("_")[1];
 			console.log("object i = " + String(i) + " event.target.className = "
 				+ event.target.className + " event.target.tagName = "
 				+ event.target.tagName + " objs[i].type = " + objs[i].type);
+
 			// if we click on a leaf tag
 			if ($target.is('.litem')) {
 				var cmds = $target.attr('class').split(' ')[1].split('_');
@@ -180,17 +219,6 @@ var JmolMenu = function() {
 					+ " quantity = " + String(quantity));
 				if (command == "action" && what == "remove") {
 					objs[i].remove();
-				} else if (command == "action" && what == "bsite") {
-					// show binding site of a ligand
-					show_binding_site(objs[i]);
-				} else if (command == "action" && what == "alignedresidues") {
-					// show aligned residues
-					if (objs[i].name.substring(0,4) != "res.") {
-						show_aligned_residues(objs[i]);
-					}
-				} else if (command == "minimize") {
-					// start minimization
-					create_mini_params_form(objs[i]);
 				} else if (command == "show" && what == "everything" && quantity == 0) {
 					// if we are hiding everything, we have to set all 'show' commands to 0
 					for (var prop in objs[i].format["show"]) {
@@ -204,9 +232,6 @@ var JmolMenu = function() {
 					}
 				} else {
 					objs[i].format[command][what] = quantity;
-				}
-				if (command == "color"){
-					set_color_range("colors_"+what, objs[i].name);					
 				}
 				jml.update(viewed.get_unhidden());
 				// reset all props that need reseting
