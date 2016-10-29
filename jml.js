@@ -29,6 +29,7 @@ function Jml () {
 	// Sets how the objects will look like initially
 	this.set_formatting = function(type) {
 		var frm = {
+			all : {show : {cartoon : 1}, color : {structure : 1}},
 			protein : {show : {cartoon : 1}, color : {structure : 1}},
 			nucleic : {show : {cartoon : 1}, color : {structure : 1}},
 			compound : {show : {sticks : 1}, color : {cpk : 1}},
@@ -43,7 +44,9 @@ function Jml () {
 	//
 	this.update = function(objs) {
 		for (var i = 0; i < objs.length; i++) {
-			this.format(objs[i]);
+			if (objs[i].type != "all") {
+				this.format(objs[i]);
+			}
 		}
 		this.display(objs);
 	};
@@ -54,8 +57,10 @@ function Jml () {
 	this.display = function(objs) {
 		var cmd = 'frames all;display ';
 		for (var i = 0; i < objs.length; i++) {
-			cmd += 'file=' + String(objs[i].iframe) 
-				+ (i < objs.length - 1 ? ',' : ';');
+			if (objs[i].type != "all") {
+				cmd += 'file=' + String(objs[i].iframe) 
+					+ (i < objs.length - 1 ? ',' : ';');
+			}
 		}
 		console.log(cmd);
 		Jmol.script(eval("jmolApplet" + String(this.applet_id)), cmd);
@@ -65,9 +70,11 @@ function Jml () {
 	// Format according to object type.
 	//
 	this.format = function(obj) {
+		
 		var ss = "select file=" + String(obj.iframe) + ";"; 
 		var show = obj.format.show;
 		console.log("show spheres = " + String(show.spheres));
+
 		var cmd = "color \"blue_green_yellow_red=[x0000FF] [x0060FF] [x00E0FF] [x00FFA0] [x00FF20] [x60FF00] [xE0FF00] [xFFE000] [xFF6000] [xFF0000]\";"
 			+ ss
 			+ "wireframe off;cpk off;"

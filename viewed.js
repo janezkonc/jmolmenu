@@ -36,6 +36,10 @@ var Viewed = function() {
 		return this.__viewed.length == 0;
 	};
 
+	this.size = function() {
+		return this.__viewed.length;
+	};
+
 	this.get_index_of = function(element) {
 		var index = -1;
 		for (var i = 0; i < this.__viewed.length; i++) {

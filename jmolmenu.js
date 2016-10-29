@@ -133,17 +133,54 @@ var JmolMenu = function() {
 	 * 
 	 */
 	this.add_item = function(obj) {
-		obj["iframe"] = jml.get_nframe() + 1;
-		obj["format"] = jml.set_formatting(obj.type);
-		obj["id"] = obj.type + "_" + viewed.get_id();
-		obj["remove"] = function() { _self.remove_item(obj); };
-		
-		var append = !viewed.empty();
-		
-		if (viewed.push(obj)) { // add if not already added
-			jml.load(obj.file, append);
-			jml.update(viewed.get_unhidden());
+
+		if (obj.type == "all") {
+			var base_format = {
+				iframe : 0,
+				format : jml.set_formatting(obj.type),
+				id : obj.type + "_" + viewed.get_id(),
+				remove : function() {},
+				type : "",
+				hidden : false,
+				file : "",
+				name : ""
+			};
+	
+			for (var prop in base_format) {
+				if (!obj.hasOwnProperty(prop)) {
+					obj[prop] = base_format[prop];
+				}
+			}
+
+			viewed.push(obj);
 			this.update(viewed.get_viewed());
+
+		} else {
+			var base_format = {
+				iframe : jml.get_nframe() + 1,
+				format : jml.set_formatting(obj.type),
+				id : obj.type + "_" + viewed.get_id(),
+				remove : function() { _self.remove_item(obj); },
+				type : "",
+				hidden : false,
+				file : "",
+				name : ""
+			};
+	
+			for (var prop in base_format) {
+				if (!obj.hasOwnProperty(prop)) {
+					obj[prop] = base_format[prop];
+				}
+			}
+	
+			console.log("viewed.size = " + String(viewed.size()));
+			var append = viewed.size() > 1;
+			
+			if (viewed.push(obj)) { // add if not already added
+				jml.load(obj.file, append);
+				jml.update(viewed.get_unhidden());
+				this.update(viewed.get_viewed());
+			}
 		}
 		return function() { _self.remove_item(obj); } // return function that can remove the object
 	};
@@ -166,6 +203,7 @@ var JmolMenu = function() {
 		var html = this.write_html(objs);
 		this.draggable.html(html);
 		this.add_click_handlers(objs);
+
 		this.draggable.find('.sf-menu').superclick({speed : 'fast'});
 		this.customize_menu(objs);
 		
@@ -215,23 +253,59 @@ var JmolMenu = function() {
 				var command = cmds[0];
 				var what = cmds[1];
 				var quantity = cmds[2];
+				var sz = objs.length;
 				console.log("command = " + command + " what = " + what
 					+ " quantity = " + String(quantity));
 				if (command == "action" && what == "remove") {
 					objs[i].remove();
+					// if we hit all->hide->everything 
+					if (objs[i].type == "all") {
+						for (j = 1; j < sz; j++) {
+							objs[objs.length - 1].remove();
+						}
+					}
 				} else if (command == "show" && what == "everything" && quantity == 0) {
 					// if we are hiding everything, we have to set all 'show' commands to 0
 					for (var prop in objs[i].format["show"]) {
 						console.log(prop + " " + objs[i].format["show"][prop]);
 						objs[i].format["show"][prop] = 0;
 					}
+					// if we hit all->hide->everything
+					if (objs[i].type == "all") {
+						for (j = 1; j < sz; j++) {
+							for (var prop in objs[j].format["show"]) {
+								console.log(prop + " " + objs[j].format["show"][prop]);
+								objs[j].format["show"][prop] = 0;
+							}
+						}
+					}
 				} else if (command == "label" && what == "clear" && quantity == 0) {
 					// if we are hiding everything, we have to set all 'show' commands to 0
 					for (var prop in objs[i].format["label"]) {
 						objs[i].format["label"][prop] = 0;
 					}
+
+					// if we hit all->label->clear
+					if (objs[i].type == "all") {
+						for (j = 1; j < sz; j++) {
+							for (var prop in objs[j].format["label"]) {
+								objs[j].format["label"][prop] = 0;
+							}
+						}
+					}
+
 				} else {
 					objs[i].format[command][what] = quantity;
+
+					// if we hit all->label->clear
+					if (objs[i].type == "all") {
+						for (j = 1; j < sz; j++) {
+							for (var prop in objs[j].format["label"]) {
+								objs[j].format[command][what] = quantity;
+							}
+						}
+					}
+
 				}
 				jml.update(viewed.get_unhidden());
 				// reset all props that need reseting

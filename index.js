@@ -6,9 +6,14 @@
 var applet_loaded = function() {
 	
 	setTimeout(function() {
-		jmolMenu.add_item({type:"protein", hidden:false, file:"files/1sup.pdb", name:"1sup"});
 		setTimeout(function() {
-			jmolMenu.add_item({type:"protein", hidden:false, file:"files/1sup.pdb", name:"1sup"});
+			jmolMenu.add_item({type:"all", name:"All"});
+			setTimeout(function() {
+				jmolMenu.add_item({type:"protein", file:"files/1sup.pdb", name:"1sup"});
+				setTimeout(function() {
+					jmolMenu.add_item({type:"protein", file:"files/1sup.pdb", name:"1sup"});
+				}, 1000);	
+			}, 1000);	
 		}, 1000);	
 	}, 0);	
 };
