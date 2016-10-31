@@ -68,4 +68,3 @@ var Viewed = function() {
 };
 
 var viewed = new Viewed();
-var viewed_mini = new Viewed();

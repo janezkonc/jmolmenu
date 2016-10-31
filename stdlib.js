@@ -125,24 +125,6 @@ function bisect_left(a, x, lo, hi) {
 	return ~a.length;
 }
 
-/*
-function bisect_left(a, x, lo, hi) {
-	lo = typeof(lo) != 'undefined' ? lo : 0;
-	hi = typeof(hi) != 'undefined' ? hi : a.length;
-//	alert("lo=" + String(lo) + " hi=" + String(hi));
-	while (lo < hi) {
-		mid = Math.floor((lo+hi)/2);
-		if (a[mid].compare(x) < 0) {
-			lo = mid + 1;
-		}
-		else {
-			hi = mid;
-		}
-	}
-	return lo;
-}
-*/
-
 //
 // Odstranijo whitespaces od spredaj, zadaj ali z obeh strani
 //

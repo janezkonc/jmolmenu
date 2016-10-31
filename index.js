@@ -60,7 +60,7 @@ $(document).ready(function() {
 			use: "HTML5 JAVA",
 			j2sPath: "jsmol-14.6.1_2016.07.11/j2s",
 			readyFunction: applet_loaded,
-			script: 'script jmol.txt' + '?' + uniqid() + '; set loadstructcallback "jmol_load"; set messagecallback "jmol_message";',
+			script: 'set loadstructcallback "jmol_load"; set messagecallback "jmol_message";',
 			//jarPath: "java",
 			//jarFile: (useSignedApplet ? "JmolAppletSigned.jar" : "JmolApplet.jar"),
 			//isSigned: useSignedApplet,
