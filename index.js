@@ -41,8 +41,7 @@ var jmol_load = function(a,b,c,d,e,f,g,h) {
 var jmol_message = function(a,b,c,d,e,f,g,h) {
 	var bb = '' + b;
 	if (bb == 'loaded') {
-		// notify user that loading has finished
-		$('#loading').addClass('ui-helper-hidden')
+		// here you can notify the user that loading of molecules to jmol is finished
 	}
 };
 

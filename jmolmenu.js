@@ -188,15 +188,15 @@ var JmolMenu = function() {
 		this.draggable.find('.sf-menu').superclick({speed : 'fast'});
 		this.customize_menu(objs);
 		
-		$(".resizable").css("width","100px");
+		$(".jmolmenu_resizable").css("width","100px");
 		
 	};
 
 	this.write_html = function(objs) {
-		var html = "<table id='legend_table'>";
+		var html = "<table id='jmolmenu_table'>";
 		for (var i = 0; i < objs.length; i++) {
 			html += "<tr class='object_" + String(i) + "'>";
-			html += "<td title='"+objs[i].name+"' class='resizable'>" + objs[i].name + "</td>";
+			html += "<td title='"+objs[i].name+"' class='jmolmenu_resizable'>" + objs[i].name + "</td>";
 			html += "<td>" + this.menu_html + "</td>";
 			html += "</tr>";
 			console.log(String(objs[i].iframe));

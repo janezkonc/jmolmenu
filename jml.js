@@ -5,7 +5,6 @@ function Jml () {
 	this.active_frame = 0;
 	this.applet_id = 0;
 
-
 	function Format(blueprint) {
 		var base_format = {
 			action : {zoom : 0, center : 0},
@@ -25,6 +24,12 @@ function Jml () {
 			}
 		}
 	};
+
+	// Generate uniq number
+	this.uniqid = function() {
+		var newDate = new Date;
+		return String(newDate.getTime() % 100000);
+	};
 	
 	// Sets how the objects will look like initially
 	this.set_formatting = function(type) {
@@ -32,10 +37,10 @@ function Jml () {
 			all : {show : {cartoon : 1}, color : {structure : 1}},
 			protein : {show : {cartoon : 1}, color : {structure : 1}},
 			nucleic : {show : {cartoon : 1}, color : {structure : 1}},
-			compound : {show : {sticks : 1}, color : {cpk : 1}},
+			compound : {show : {ballssticks : 1}, color : {cpk : 1}},
+			glyco : {show : {sticks : 1}, color : {cpk : 1}},
 			ion : {show : {spheres : 1}, color : {cpk : 1}},
-			//~ water : {show : {ballsticks : 1}, color : {cpk : 1}},
-			water : {show : {spheres : 1}, color : {cpk : 1}},
+			water : {show : {ballssticks : 1}, color : {cpk : 1}}
 		};
 		return new Format(frm[type]);
 	};
@@ -150,7 +155,7 @@ function Jml () {
 		if (typeof(app)==='undefined') app = true; // default
 
 		var cmd = 'load ' + (app ? 'append' : '') + ' ' + file 
-			+ '?' + uniqid() + ';' + 'message \"loaded\";';
+			+ '?' + this.uniqid() + ';' + 'message \"loaded\";';
 			
 		console.log(cmd);
 		Jmol.script(eval("jmolApplet" + String(this.applet_id)), cmd);
@@ -190,7 +195,7 @@ function Jml () {
 	// Download PNG picture of jsmol content
 	this.write_png = function(file) {
 		Jmol.script(eval("jmolApplet" + String(this.applet_id)), 'antialiasDisplay=true;write PNG "picture_' 
-			+ __qpdb + __qcid + '_' + uniqid() + '.png";antialiasDisplay=false;');
+			+ __qpdb + __qcid + '_' + this.uniqid() + '.png";antialiasDisplay=false;');
 	};
 
 	// set background
