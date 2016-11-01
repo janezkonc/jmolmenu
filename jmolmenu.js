@@ -255,19 +255,16 @@ var JmolMenu = function() {
 				console.log("command = " + command + " what = " + what
 					+ " quantity = " + String(quantity));
 				if (command == "action" && what == "remove") {
-					objs[i].remove();
 					// if we hit all->hide->everything 
 					if (objs[i].type == "all") {
 						for (j = 1; j < sz; j++) {
 							objs[objs.length - 1].remove();
 						}
-					}
+					} else
+						objs[i].remove();
+						
 				} else if (command == "show" && what == "everything" && quantity == 0) {
 					// if we are hiding everything, we have to set all 'show' commands to 0
-					for (var prop in objs[i].format["show"]) {
-						console.log(prop + " " + objs[i].format["show"][prop]);
-						objs[i].format["show"][prop] = 0;
-					}
 					// if we hit all->hide->everything
 					if (objs[i].type == "all") {
 						for (j = 1; j < sz; j++) {
@@ -276,12 +273,15 @@ var JmolMenu = function() {
 								objs[j].format["show"][prop] = 0;
 							}
 						}
+					} else {
+						for (var prop in objs[i].format["show"]) {
+							console.log(prop + " " + objs[i].format["show"][prop]);
+							objs[i].format["show"][prop] = 0;
+						}
 					}
+					
 				} else if (command == "label" && what == "clear" && quantity == 0) {
 					// if we are hiding everything, we have to set all 'show' commands to 0
-					for (var prop in objs[i].format["label"]) {
-						objs[i].format["label"][prop] = 0;
-					}
 
 					// if we hit all->label->clear
 					if (objs[i].type == "all") {
@@ -290,11 +290,14 @@ var JmolMenu = function() {
 								objs[j].format["label"][prop] = 0;
 							}
 						}
+					} else {
+
+						for (var prop in objs[i].format["label"]) {
+							objs[i].format["label"][prop] = 0;
+						}
 					}
 
 				} else {
-					objs[i].format[command][what] = quantity;
-
 					// if we hit all->label->clear
 					if (objs[i].type == "all") {
 						for (j = 1; j < sz; j++) {
@@ -302,7 +305,8 @@ var JmolMenu = function() {
 								objs[j].format[command][what] = quantity;
 							}
 						}
-					}
+					} else
+						objs[i].format[command][what] = quantity;
 
 				}
 				jml.update(viewed.get_unhidden());
