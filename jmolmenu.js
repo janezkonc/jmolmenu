@@ -264,16 +264,17 @@ var JmolMenu = function() {
 						objs[i].remove();
 						
 				} else if (command == "show" && what == "everything" && quantity == 0) {
-					// if we are hiding everything, we have to set all 'show' commands to 0
+
 					// if we hit all->hide->everything
 					if (objs[i].type == "all") {
-						for (j = 1; j < sz; j++) {
+						for (j = 0; j < sz; j++) {
 							for (var prop in objs[j].format["show"]) {
 								console.log(prop + " " + objs[j].format["show"][prop]);
 								objs[j].format["show"][prop] = 0;
 							}
 						}
 					} else {
+						// if we are hiding everything, we have to set all 'show' commands to 0
 						for (var prop in objs[i].format["show"]) {
 							console.log(prop + " " + objs[i].format["show"][prop]);
 							objs[i].format["show"][prop] = 0;
@@ -281,41 +282,53 @@ var JmolMenu = function() {
 					}
 					
 				} else if (command == "label" && what == "clear" && quantity == 0) {
-					// if we are hiding everything, we have to set all 'show' commands to 0
 
 					// if we hit all->label->clear
 					if (objs[i].type == "all") {
-						for (j = 1; j < sz; j++) {
+						for (j = 0; j < sz; j++) {
 							for (var prop in objs[j].format["label"]) {
 								objs[j].format["label"][prop] = 0;
 							}
 						}
 					} else {
-
+						// if we are hiding everything, we have to set all 'show' commands to 0
 						for (var prop in objs[i].format["label"]) {
 							objs[i].format["label"][prop] = 0;
 						}
 					}
 
 				} else {
-					// if we hit all->label->clear
+					// if we hit all->zoom->in/out or all->center
 					if (objs[i].type == "all") {
-						for (j = 1; j < sz; j++) {
-							for (var prop in objs[j].format["label"]) {
-								objs[j].format[command][what] = quantity;
-							}
+						for (j = 0; j < sz; j++) {
+							objs[j].format[command][what] = quantity;
 						}
 					} else
 						objs[i].format[command][what] = quantity;
 
 				}
-				jml.update(viewed.get_unhidden());
+				
+				if (objs[i].type == "all") {
+					jml.update_all(viewed.get_unhidden());
+				} else {
+					jml.update(viewed.get_unhidden());
+				}
 				// reset all props that need reseting
 				if (typeof objs[i] !== "undefined") {
-					objs[i].format['action']['zoom'] = 0;
-					objs[i].format['action']['center'] = 0;
-					for (var prop in objs[i].format["color"]) {
-						objs[i].format["color"][prop] = 0;
+					if (objs[i].type == "all") {
+						for (j = 0; j < sz; j++) {
+							objs[j].format['action']['zoom'] = 0;
+							objs[j].format['action']['center'] = 0;
+							for (var prop in objs[j].format["color"]) {
+								objs[j].format["color"][prop] = 0;
+							}
+						}
+					} else {
+						objs[i].format['action']['zoom'] = 0;
+						objs[i].format['action']['center'] = 0;
+						for (var prop in objs[i].format["color"]) {
+							objs[i].format["color"][prop] = 0;
+						}
 					}
 				}
 			}

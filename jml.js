@@ -40,39 +40,35 @@ function Jml () {
 		return new Format(frm[type]);
 	};
 	
-	//
 	// Update and render the unhidden objects in jsmol viewer.
-	//
 	this.update = function(objs) {
-		for (var i = 0; i < objs.length; i++) {
-			if (objs[i].type != "all") {
-				this.format(objs[i]);
-			}
+		for (var i = 1; i < objs.length; i++) { // starting from 1 to skip the "all" object
+			this.format(objs[i]);
 		}
 		this.display(objs);
 	};
 
-	//
+	// Update and render the all object in jsmol viewer.
+	this.update_all = function(objs) {
+		this.format_all(objs); // 0-th objs is the "all" object
+		this.display(objs);
+	};
+
 	// Show object frames
-	//
 	this.display = function(objs) {
 		var cmd = 'frames all;display ';
-		for (var i = 0; i < objs.length; i++) {
-			if (objs[i].type != "all") {
-				cmd += 'file=' + String(objs[i].iframe) 
-					+ (i < objs.length - 1 ? ',' : ';');
-			}
+		for (var i = 1; i < objs.length; i++) { // starting from 1 to skip the "all" object
+			cmd += 'file=' + String(objs[i].iframe) 
+				+ (i < objs.length - 1 ? ',' : ';');
 		}
 		console.log(cmd);
 		Jmol.script(eval("jmolApplet" + String(this.applet_id)), cmd);
 	};
 
-	//
 	// Format according to object type.
-	//
 	this.format = function(obj) {
-		
-		var ss = "select file=" + String(obj.iframe) + ";"; 
+
+		var ss = "select file=" + String(obj.iframe) + ";";
 		var show = obj.format.show;
 		console.log("show spheres = " + String(show.spheres));
 
@@ -120,6 +116,72 @@ function Jml () {
 		cmd += ss
 			+ (action.zoom != 0 ? "zoom " + String(action.zoom) + ";" : "")
 			+ (action.center ? "center file=" + String(obj.iframe) + ";" : "");
+
+		console.log(cmd);	
+		Jmol.script(eval("jmolApplet" + String(this.applet_id)), cmd);
+	};
+
+	// Format according to object type.
+	this.format_all = function(objs) {
+
+		var obj = objs[0];
+		var ss = "select ";
+		var sele = "(";
+		
+		for (var i = 1; i < objs.length; i++) {
+			sele += "file=" + String(objs[i].iframe) + (i < objs.length - 1 ? "," : ""); 
+		}
+		
+		sele += ")";
+		ss += sele + ";";
+		
+		var show = obj.format.show;
+		console.log("show spheres = " + String(show.spheres));
+
+		var cmd = "color \"blue_green_yellow_red=[x0000FF] [x0060FF] [x00E0FF] [x00FFA0] [x00FF20] [x60FF00] [xE0FF00] [xFFE000] [xFF6000] [xFF0000]\";"
+			+ ss
+			+ "wireframe off;cpk off;"
+			+ (show.lines == 1 ? "wireframe 2;" : (show.sticks == 1 ? "" : "wireframe off;"))
+			+ (show.sticks == 1 ? "wireframe 50;" : (show.lines == 1 ? "" : "wireframe off;"))
+			+ (show.ballssticks == 1 ? "wireframe 30;cpk 60;" : (show.lines == 1 || show.sticks == 1 || show.spheres == 1 ? "" : "wireframe off;cpk off;"))
+			+ (show.backbone == 1 ? "backbone;" : "backbone off;")
+			+ (show.ribbon == 1 ? "trace;" : "trace off;")
+			+ (show.cartoon == 1 ? "cartoon;" : "cartoon off;")
+			+ (show.spheres == 1 ? "spacefill;" : (show.ballssticks == 1 ? "" : "spacefill off;"));
+
+		var label = obj.format.label;
+		cmd += (label.atoms == 1 ? "select (protein and *.CA or not protein and not water) and " + sele + ";font label 15;label %a;" 
+			+ ss : (label.residues == 1 ? "" : "label off;"))
+			+ (label.residues == 1 ? "select (protein and *.CA or not protein and not water) and " + sele + ";font label 15;label %n%R;" 
+			+ ss : (label.atoms == 1 ? "" : "label off;"));
+
+		var color = obj.format.color;
+		cmd += (color.bgyr == 1 ? "color cartoon property relativetemperature \"blue_green_yellow_red\" range 0.0 0.9;" 
+			+ "color atom property relativetemperature \"blue_green_yellow_red\" range 0.0 0.9;": "")
+			+ (color.br == 1 ? "color cartoon property relativetemperature \"blue_red\" range 0.0 0.9;" 
+			+ "color atom property relativetemperature \"blue_red\" range 0.0 0.9;": "")
+			+ (color.wg == 1 ? "color cartoon property relativetemperature \"white_green\" range 0.0 0.9;" 
+			+ "color atom property relativetemperature \"white_green\" range 0.0 0.9;": "")
+			+ (color.wb == 1 ? "color cartoon property relativetemperature \"white_black\" range 0.0 0.9;" 
+			+ "color atom property relativetemperature \"white_black\" range 0.0 0.9;": "")
+			+ (color.cpk ? "color cartoon cpk;color atom cpk;" : "")
+			+ (color.structure ? "color cartoon structure;color atom structure;" : "")
+			+ (color.red == 1 ? "color cartoon red;color atom red;" : "")
+			+ (color.green == 1 ? "color cartoon green;color atom green;" : "")
+			+ (color.blue == 1 ? "color cartoon blue;color atom blue;" : "")
+			+ (color.yellow == 1 ? "color cartoon yellow;color atom yellow;" : "")
+			+ (color.orange == 1 ? "color cartoon orange;color atom orange;" : "")
+			+ (color.magenta == 1 ? "color cartoon magenta;color atom magenta;" : "")
+			+ (color.cyan == 1 ? "color cartoon cyan;color atom cyan;" : "")
+			+ (color.alrc == 1 ? "select model=1 and " + sele + ";color cartoon red;color atom red;select model=2 and " + sele + ";color cartoon cyan;color atom cyan;" 
+			+ ss : "")
+			+ (color.algb == 1 ? "select model=1 and " + sele + ";color cartoon green;color atom green;select model=2 and " + sele + ";color cartoon blue;color atom blue;" 
+			+ ss : "");
+
+		var action = obj.format.action;
+		cmd += ss
+			+ (action.zoom != 0 ? "zoom " + String(action.zoom) + ";" : "")
+			+ (action.center ? "center " + sele + ";" : "");
 
 		console.log(cmd);	
 		Jmol.script(eval("jmolApplet" + String(this.applet_id)), cmd);
