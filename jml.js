@@ -121,7 +121,7 @@ function Jml () {
 		Jmol.script(eval("jmolApplet" + String(this.applet_id)), cmd);
 	};
 
-	// Format according to object type.
+	// Format ALL just for zoom and center
 	this.format_all = function(objs) {
 
 		var obj = objs[0];
@@ -135,51 +135,8 @@ function Jml () {
 		sele += ")";
 		ss += sele + ";";
 		
-		var show = obj.format.show;
-		console.log("show spheres = " + String(show.spheres));
-
-		var cmd = "color \"blue_green_yellow_red=[x0000FF] [x0060FF] [x00E0FF] [x00FFA0] [x00FF20] [x60FF00] [xE0FF00] [xFFE000] [xFF6000] [xFF0000]\";"
-			+ ss
-			+ "wireframe off;cpk off;"
-			+ (show.lines == 1 ? "wireframe 2;" : (show.sticks == 1 ? "" : "wireframe off;"))
-			+ (show.sticks == 1 ? "wireframe 50;" : (show.lines == 1 ? "" : "wireframe off;"))
-			+ (show.ballssticks == 1 ? "wireframe 30;cpk 60;" : (show.lines == 1 || show.sticks == 1 || show.spheres == 1 ? "" : "wireframe off;cpk off;"))
-			+ (show.backbone == 1 ? "backbone;" : "backbone off;")
-			+ (show.ribbon == 1 ? "trace;" : "trace off;")
-			+ (show.cartoon == 1 ? "cartoon;" : "cartoon off;")
-			+ (show.spheres == 1 ? "spacefill;" : (show.ballssticks == 1 ? "" : "spacefill off;"));
-
-		var label = obj.format.label;
-		cmd += (label.atoms == 1 ? "select (protein and *.CA or not protein and not water) and " + sele + ";font label 15;label %a;" 
-			+ ss : (label.residues == 1 ? "" : "label off;"))
-			+ (label.residues == 1 ? "select (protein and *.CA or not protein and not water) and " + sele + ";font label 15;label %n%R;" 
-			+ ss : (label.atoms == 1 ? "" : "label off;"));
-
-		var color = obj.format.color;
-		cmd += (color.bgyr == 1 ? "color cartoon property relativetemperature \"blue_green_yellow_red\" range 0.0 0.9;" 
-			+ "color atom property relativetemperature \"blue_green_yellow_red\" range 0.0 0.9;": "")
-			+ (color.br == 1 ? "color cartoon property relativetemperature \"blue_red\" range 0.0 0.9;" 
-			+ "color atom property relativetemperature \"blue_red\" range 0.0 0.9;": "")
-			+ (color.wg == 1 ? "color cartoon property relativetemperature \"white_green\" range 0.0 0.9;" 
-			+ "color atom property relativetemperature \"white_green\" range 0.0 0.9;": "")
-			+ (color.wb == 1 ? "color cartoon property relativetemperature \"white_black\" range 0.0 0.9;" 
-			+ "color atom property relativetemperature \"white_black\" range 0.0 0.9;": "")
-			+ (color.cpk ? "color cartoon cpk;color atom cpk;" : "")
-			+ (color.structure ? "color cartoon structure;color atom structure;" : "")
-			+ (color.red == 1 ? "color cartoon red;color atom red;" : "")
-			+ (color.green == 1 ? "color cartoon green;color atom green;" : "")
-			+ (color.blue == 1 ? "color cartoon blue;color atom blue;" : "")
-			+ (color.yellow == 1 ? "color cartoon yellow;color atom yellow;" : "")
-			+ (color.orange == 1 ? "color cartoon orange;color atom orange;" : "")
-			+ (color.magenta == 1 ? "color cartoon magenta;color atom magenta;" : "")
-			+ (color.cyan == 1 ? "color cartoon cyan;color atom cyan;" : "")
-			+ (color.alrc == 1 ? "select model=1 and " + sele + ";color cartoon red;color atom red;select model=2 and " + sele + ";color cartoon cyan;color atom cyan;" 
-			+ ss : "")
-			+ (color.algb == 1 ? "select model=1 and " + sele + ";color cartoon green;color atom green;select model=2 and " + sele + ";color cartoon blue;color atom blue;" 
-			+ ss : "");
-
 		var action = obj.format.action;
-		cmd += ss
+		var cmd = ss
 			+ (action.zoom != 0 ? "zoom " + String(action.zoom) + ";" : "")
 			+ (action.center ? "center " + sele + ";" : "");
 

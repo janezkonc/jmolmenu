@@ -308,7 +308,7 @@ var JmolMenu = function() {
 
 				}
 				
-				if (objs[i].type == "all") {
+				if (typeof objs[i] !== "undefined" && objs[i].type == "all" && (what == "zoom" || what == "center")) {
 					jml.update_all(viewed.get_unhidden());
 				} else {
 					jml.update(viewed.get_unhidden());
@@ -316,7 +316,7 @@ var JmolMenu = function() {
 				// reset all props that need reseting
 				if (typeof objs[i] !== "undefined") {
 					if (objs[i].type == "all") {
-						for (j = 0; j < sz; j++) {
+						for (j = 0; j < objs.length; j++) {
 							objs[j].format['action']['zoom'] = 0;
 							objs[j].format['action']['center'] = 0;
 							for (var prop in objs[j].format["color"]) {
