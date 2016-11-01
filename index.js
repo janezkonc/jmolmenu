@@ -6,15 +6,21 @@
 var applet_loaded = function() {
 	
 	setTimeout(function() {
-		setTimeout(function() {
-			jmolMenu.add_item({type:"all", name:"All"});
-			setTimeout(function() {
-				jmolMenu.add_item({type:"protein", file:"files/1sup.pdb", name:"1sup"});
-				setTimeout(function() {
-					jmolMenu.add_item({type:"protein", file:"files/1sup.pdb", name:"1sup"});
-				}, 1000);	
-			}, 1000);	
-		}, 1000);	
+		
+		// add click handlers for buttons to load different molecules to jmol
+		jmolMenu.add_item({type:"all", name:"All"});
+		$(":button").eq(0).click(function() {
+			jmolMenu.add_item({type:"protein", file:"files/1sup.pdb", name:"Protein"});
+		});
+		$(":button").eq(1).click(function() {
+			jmolMenu.add_item({type:"compound", file:"files/pms.pdb", name:"Compound"});
+		});
+		$(":button").eq(2).click(function() {
+			jmolMenu.add_item({type:"ion", file:"files/ions.pdb", name:"Ions"});
+		});
+		$(":button").eq(3).click(function() {
+			jmolMenu.add_item({type:"water", file:"files/h2o.pdb", name:"H2O"});
+		});
 	}, 0);	
 };
 
@@ -23,7 +29,7 @@ var applet_loaded = function() {
  */
 var jmol_load = function(a,b,c,d,e,f,g,h) {
 	var hh = '' + h;
-	// updatamo jml.nframe ! 
+	// update jml.nframe ! 
 	f = Number(String(hh).split('.')[0]);
 	jml.set_nframe(f);
 	jml.set_active_frame(f);
@@ -83,7 +89,7 @@ $(document).ready(function() {
 $(document).ready(function() {
 
 	jmolMenu.init($("#draggable"));
-	
+	$("#info-to-users").fadeOut("slow");
 });
 
 

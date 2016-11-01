@@ -24,8 +24,6 @@ var JmolMenu = function() {
 		+ "</li>"
 		+ ""
 		+ "<li> <a class='litem action_center_1' href='#'>Center</a> </li>"
-		+ "<li> <a class='litem action_bsite_1 _query _aligned _alignedresidues _bsite _mini' href='#'>Show Binding Site</a> </li>"
-		+ "<li> <a class='litem action_alignedresidues_1 _query _bsite _mini hetero protein nucleic ion' href='#'>Show Aligned Residues</a> </li>"
 		+ ""
 		+ "</ul>"
 		+ "</li>"
