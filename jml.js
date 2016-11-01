@@ -37,7 +37,7 @@ function Jml () {
 			all : {show : {cartoon : 1}, color : {structure : 1}},
 			protein : {show : {cartoon : 1}, color : {structure : 1}},
 			nucleic : {show : {cartoon : 1}, color : {structure : 1}},
-			compound : {show : {ballssticks : 1}, color : {cpk : 1}},
+			compound : {show : {sticks : 1}, color : {cpk : 1}},
 			glyco : {show : {sticks : 1}, color : {cpk : 1}},
 			ion : {show : {spheres : 1}, color : {cpk : 1}},
 			water : {show : {ballssticks : 1}, color : {cpk : 1}}
