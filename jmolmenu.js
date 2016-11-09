@@ -1,9 +1,73 @@
-//
-// Globalna spremenljivka viewed, v kateri so vsi trenutno viewani frami (in njihove stevilke)
-//
-
 
 var JmolMenu = function() {
+
+	// Viewed contains all frames (their numbers) that are currently in jmol
+	function Viewed() {
+		this.current_id = 0;
+		this.__viewed = new Array();
+	
+		this.get_viewed = function() {
+			return this.__viewed;
+		};
+	
+		this.get_unhidden = function() {
+			var f = new Array();
+			for (var i = 0; i < this.__viewed.length; i++) {
+				if (!this.__viewed[i].hidden) {
+					f.push(this.__viewed[i]);
+				}
+			}
+			return f;
+		};
+	
+		this.push = function(element) {
+			if (this.get_index_of(element) == -1) {
+				this.__viewed.push(element);
+				return true;
+			}
+			return false;
+		};
+	
+		this.has_element = function(element) {
+			return this.get_index_of(element) > -1;
+		};
+	
+		this.empty = function() {
+			return this.__viewed.length == 0;
+		};
+	
+		this.size = function() {
+			return this.__viewed.length;
+		};
+	
+		this.get_index_of = function(element) {
+			var index = -1;
+			for (var i = 0; i < this.__viewed.length; i++) {
+				if (element.id == this.__viewed[i].id) {
+					index = i;
+					break;
+				}
+			}
+			return index;
+		};
+	
+		this.remove = function(element) {
+			var index = this.get_index_of(element);
+			var iframe = this.__viewed[index].iframe;
+			this.__viewed.splice(index, 1); // remove
+			return iframe; // return iframe of deleted
+		};
+	
+		this.get_id = function() {
+			if (this.current_id == 1000000) {
+				this.current_id = 0;
+			}
+			this.current_id++;
+			return this.current_id;
+		}
+	};
+	
+	this.viewed = new Viewed();
 
 	this.draggable = 0;
 	var _self = this;
@@ -119,7 +183,7 @@ var JmolMenu = function() {
 			var base_format = {
 				iframe : 0,
 				format : jml.set_formatting(obj.type),
-				id : obj.type + "_" + viewed.get_id(),
+				id : obj.type + "_" + this.viewed.get_id(),
 				remove : function() {},
 				type : "",
 				hidden : false,
@@ -133,14 +197,14 @@ var JmolMenu = function() {
 				}
 			}
 
-			viewed.push(obj);
-			this.update(viewed.get_viewed());
+			this.viewed.push(obj);
+			this.update(this.viewed.get_viewed());
 
 		} else {
 			var base_format = {
 				iframe : jml.get_nframe() + 1,
 				format : jml.set_formatting(obj.type),
-				id : obj.type + "_" + viewed.get_id(),
+				id : obj.type + "_" + this.viewed.get_id(),
 				remove : function() { _self.remove_item(obj); },
 				type : "",
 				hidden : false,
@@ -154,13 +218,13 @@ var JmolMenu = function() {
 				}
 			}
 	
-			console.log("viewed.size = " + String(viewed.size()));
-			var append = viewed.size() > 1;
+			console.log("viewed.size = " + String(this.viewed.size()));
+			var append = this.viewed.size() > 1;
 			
-			if (viewed.push(obj)) { // add if not already added
+			if (this.viewed.push(obj)) { // add if not already added
 				jml.load(obj.file, append);
-				jml.update(viewed.get_unhidden());
-				this.update(viewed.get_viewed());
+				jml.update(this.viewed.get_unhidden());
+				this.update(this.viewed.get_viewed());
 			}
 		}
 		return function() { _self.remove_item(obj); } // return function that can remove the object
@@ -168,10 +232,10 @@ var JmolMenu = function() {
 
 
 	this.remove_item = function(obj) {
-		if (viewed.has_element(obj)) {
-			jml.zap(viewed.remove(obj));
-			jml.update(viewed.get_unhidden());
-			this.update(viewed.get_viewed());
+		if (this.viewed.has_element(obj)) {
+			jml.zap(this.viewed.remove(obj));
+			jml.update(this.viewed.get_unhidden());
+			this.update(this.viewed.get_viewed());
 		}
 	};
 
@@ -292,9 +356,9 @@ var JmolMenu = function() {
 				}
 				
 				if (typeof objs[i] !== "undefined" && objs[i].type == "all" && (what == "zoom" || what == "center")) {
-					jml.update_all(viewed.get_unhidden());
+					jml.update_all(this.viewed.get_unhidden());
 				} else {
-					jml.update(viewed.get_unhidden());
+					jml.update(this.viewed.get_unhidden());
 				}
 				// reset all props that need reseting
 				if (typeof objs[i] !== "undefined") {
