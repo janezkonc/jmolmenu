@@ -183,7 +183,7 @@ var JmolMenu = function() {
 			var base_format = {
 				iframe : 0,
 				format : jml.set_formatting(obj.type),
-				id : obj.type + "_" + this.viewed.get_id(),
+				id : obj.type + "_" + _self.viewed.get_id(),
 				remove : function() {},
 				type : "",
 				hidden : false,
@@ -197,14 +197,14 @@ var JmolMenu = function() {
 				}
 			}
 
-			this.viewed.push(obj);
-			this.update(this.viewed.get_viewed());
+			_self.viewed.push(obj);
+			this.update(_self.viewed.get_viewed());
 
 		} else {
 			var base_format = {
 				iframe : jml.get_nframe() + 1,
 				format : jml.set_formatting(obj.type),
-				id : obj.type + "_" + this.viewed.get_id(),
+				id : obj.type + "_" + _self.viewed.get_id(),
 				remove : function() { _self.remove_item(obj); },
 				type : "",
 				hidden : false,
@@ -218,13 +218,13 @@ var JmolMenu = function() {
 				}
 			}
 	
-			console.log("viewed.size = " + String(this.viewed.size()));
-			var append = this.viewed.size() > 1;
+			console.log("viewed.size = " + String(_self.viewed.size()));
+			var append = _self.viewed.size() > 1;
 			
-			if (this.viewed.push(obj)) { // add if not already added
+			if (_self.viewed.push(obj)) { // add if not already added
 				jml.load(obj.file, append);
-				jml.update(this.viewed.get_unhidden());
-				this.update(this.viewed.get_viewed());
+				jml.update(_self.viewed.get_unhidden());
+				this.update(_self.viewed.get_viewed());
 			}
 		}
 		return function() { _self.remove_item(obj); } // return function that can remove the object
@@ -232,10 +232,10 @@ var JmolMenu = function() {
 
 
 	this.remove_item = function(obj) {
-		if (this.viewed.has_element(obj)) {
-			jml.zap(this.viewed.remove(obj));
-			jml.update(this.viewed.get_unhidden());
-			this.update(this.viewed.get_viewed());
+		if (_self.viewed.has_element(obj)) {
+			jml.zap(_self.viewed.remove(obj));
+			jml.update(_self.viewed.get_unhidden());
+			this.update(_self.viewed.get_viewed());
 		}
 	};
 
@@ -356,9 +356,9 @@ var JmolMenu = function() {
 				}
 				
 				if (typeof objs[i] !== "undefined" && objs[i].type == "all" && (what == "zoom" || what == "center")) {
-					jml.update_all(this.viewed.get_unhidden());
+					jml.update_all(_self.viewed.get_unhidden());
 				} else {
-					jml.update(this.viewed.get_unhidden());
+					jml.update(_self.viewed.get_unhidden());
 				}
 				// reset all props that need reseting
 				if (typeof objs[i] !== "undefined") {
